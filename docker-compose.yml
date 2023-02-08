@@ -1,0 +1,30 @@
+version: '3.4'
+
+networks:
+  backend:
+
+services:
+  sqlservicedb:
+    container_name: sqlservice-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd123#
+    networks:
+      - backend
+    ports:
+      - 8001:1433
+  catalog.api:
+    container_name: catalog-api
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: src/Services/Catalog/Catalog.API/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:80
+    environment:
+      - DB_HOST=sqlservicedb
+      - DB_NAME=shopOnContainer
+      - DB_SA_PASSWORD=P@ssw0rd123#
