@@ -31,7 +31,6 @@ public class CatalogController : ControllerBase
 			.ToListAsync();
 
         var model = new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnCurrentPage);
-
 		return Ok(model);
 	}
 
@@ -88,9 +87,7 @@ public class CatalogController : ControllerBase
 		};
 
 		db.CatalogItems.Add(item);
-
 		await db.SaveChangesAsync();
-
 		return Ok();
 	}
 
@@ -117,9 +114,7 @@ public class CatalogController : ControllerBase
 		}
 
 		db.CatalogItems.Remove(item);
-
 		await db.SaveChangesAsync();
-
 		return Ok();
 	}
 
@@ -131,11 +126,95 @@ public class CatalogController : ControllerBase
 		return await db.CatalogBrands.ToListAsync();
 	}
 
+	// POST api/[controller]/brands
+	[HttpPost]
+    [Route("brands")]
+	public async Task<ActionResult> CreateBrandAsync([FromBody] CatalogBrand catalogBrand)
+	{
+		var brand = new CatalogBrand
+		{
+			Brand = catalogBrand.Brand
+		};
+
+        db.CatalogBrands.Add(brand);
+		await db.SaveChangesAsync();
+		return Ok();
+    }
+
+	// PUT api/[controller]/brands
+	[HttpPut]
+    [Route("brands")]
+	public async Task<ActionResult> UpdateBrandAsync([FromBody] CatalogBrand catalogBrand)
+	{
+		db.CatalogBrands.Update(catalogBrand);
+		await db.SaveChangesAsync();
+		return Ok();
+	}
+
+	// DELETE api/[controller]/brands
+	[HttpDelete]
+    [Route("brands")]
+	public async Task<ActionResult> DeleteBrandAsync(int id)
+	{
+        var brand = await db.CatalogBrands.FindAsync(id);
+
+		if(brand == null)
+		{
+			return NotFound();
+		}
+
+		db.CatalogBrands.Remove(brand);
+		await db.SaveChangesAsync();
+		return Ok();
+    }
+
     // GET api/[controller]/types
     [HttpGet]
     [Route("types")]
     public async Task<ActionResult<List<CatalogType>>> GetTypesAsync()
     {
         return await db.CatalogTypes.ToListAsync();
+    }
+
+    // POST api/[controller]/types
+    [HttpPost]
+    [Route("types")]
+    public async Task<ActionResult> CreateTypeAsync([FromBody] CatalogType catalogType)
+    {
+        var type = new CatalogType
+        {
+            Type = catalogType.Type
+        };
+
+        db.CatalogTypes.Add(type);
+        await db.SaveChangesAsync();
+        return Ok();
+    }
+
+    // PUT api/[controller]/types
+    [HttpPut]
+    [Route("types")]
+    public async Task<ActionResult> UpdateTypeAsync([FromBody] CatalogType catalogType)
+    {
+        db.CatalogTypes.Update(catalogType);
+        await db.SaveChangesAsync();
+        return Ok();
+    }
+
+    // DELETE api/[controller]/types
+    [HttpDelete]
+    [Route("types")]
+    public async Task<ActionResult> DeleteTypeAsync(int id)
+    {
+        var type = await db.CatalogTypes.FindAsync(id);
+
+        if (type == null)
+        {
+            return NotFound();
+        }
+
+        db.CatalogTypes.Remove(type);
+        await db.SaveChangesAsync();
+        return Ok();
     }
 }
