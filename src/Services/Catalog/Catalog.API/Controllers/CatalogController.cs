@@ -153,7 +153,7 @@ public class CatalogController : ControllerBase
 
 	// DELETE api/[controller]/brands
 	[HttpDelete]
-    [Route("brands")]
+    [Route("brands/{id:int}")]
 	public async Task<ActionResult> DeleteBrandAsync(int id)
 	{
         var brand = await db.CatalogBrands.FindAsync(id);
@@ -203,7 +203,7 @@ public class CatalogController : ControllerBase
 
     // DELETE api/[controller]/types
     [HttpDelete]
-    [Route("types")]
+    [Route("types/{id:int}")]
     public async Task<ActionResult> DeleteTypeAsync(int id)
     {
         var type = await db.CatalogTypes.FindAsync(id);
