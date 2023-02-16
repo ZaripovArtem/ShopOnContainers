@@ -14,6 +14,22 @@ services:
       - backend
     ports:
       - 8001:1433
+
+  postgresqldb:
+    container_name: postgresql-db
+    image: postgres:latest
+    ports:
+      - "5432"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=bloguser
+      - POSTGRES_PASSWORD=bloguser
+      - POSTGRES_DB=customerdb
+    networks:
+      - backend
+
   catalog.api:
     container_name: catalog-api
     image: ${DOCKER_REGISTRY-}catalogapi
@@ -28,3 +44,23 @@ services:
       - DB_HOST=sqlservicedb
       - DB_NAME=shopOnContainer
       - DB_SA_PASSWORD=P@ssw0rd123#
+
+  customer.api:
+    container_name: customer-api
+    image: postgres:latest
+    networks:
+      - backend
+    build:
+      context: .
+      dockerfile: src/Services/Customer/Customer.API/Dockerfile
+    depends_on:
+      - postgresqldb
+    ports:
+      - 8003:80
+    environment:
+      - DB_HOST=postgresqldb
+      - DB_NAME=customerdb
+      - DB_USERNAME=bloguser
+      - DB_PASSWORD=bloguser
+volumes:
+   db_volume:
