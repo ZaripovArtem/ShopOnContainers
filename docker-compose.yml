@@ -30,6 +30,14 @@ services:
     networks:
       - backend
 
+  mongodb:
+    container_name: mongo-db
+    image: mongo
+    ports:
+      - 8004:27017
+    networks:
+      - backend
+
   catalog.api:
     container_name: catalog-api
     image: ${DOCKER_REGISTRY-}catalogapi
@@ -62,5 +70,20 @@ services:
       - DB_NAME=customerdb
       - DB_USERNAME=bloguser
       - DB_PASSWORD=bloguser
+
+  order.api:
+    container_name: order-api
+    image: ${DOCKER_REGISTRY-}orderapi
+    build:
+      context: .
+      dockerfile: src/Services/Order/Order.API/Dockerfile
+    ports:
+      - 8005:80
+    networks:
+      - backend
+    environment:
+      - DB_HOST=mongodb
+      - DB_NAME=order
+
 volumes:
    db_volume:
