@@ -2,6 +2,7 @@ version: '3.4'
 
 networks:
   backend:
+  frontend:
 
 services:
   sqlservicedb:
@@ -84,6 +85,18 @@ services:
     environment:
       - DB_HOST=mongodb
       - DB_NAME=order
+
+  webmvc:
+    container_name: webmvc
+    image: ${DOCKER_REGISTRY-}webmvc
+    build:
+      context: .
+      dockerfile: src/Web/WebMVC/Dockerfile
+    networks:
+      - frontend
+      - backend
+    ports:
+     - 8006:80 
 
 volumes:
    db_volume:

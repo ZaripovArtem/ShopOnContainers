@@ -71,6 +71,55 @@ public class CatalogController : ControllerBase
 
         return new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnCurrentPage);
 	}
+    // GET api/v1/[controller]/items/type/id/brand[?pageSize=3&pageIndex=10]
+    [HttpGet]
+    [Route("items/type/{catalogTypeId}/brand/{catalogBrandId:int?}")]
+    [ProducesResponseType(typeof(PaginatedItemsViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<PaginatedItemsViewModel<CatalogItem>>> ItemsByTypeIdAndBrandIdAsync(int catalogTypeId, int? catalogBrandId, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
+    {
+        var item = (IQueryable<CatalogItem>)db.CatalogItems;
+
+        item = item.Where(ci => ci.CatalogTypeId == catalogTypeId);
+
+        if (catalogBrandId.HasValue)
+        {
+            item = item.Where(ci => ci.CatalogBrandId == catalogBrandId);
+        }
+
+        var totalItems = await item.CountAsync();
+
+        var itemsOnPage = await item
+            .Skip(pageSize * pageIndex)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
+    }
+
+    // GET api/v1/[controller]/items/type/all/brand[?pageSize=3&pageIndex=10]
+    [HttpGet]
+    [Route("items/type/all/brand/{catalogBrandId:int?}")]
+    [ProducesResponseType(typeof(PaginatedItemsViewModel<CatalogItem>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<PaginatedItemsViewModel<CatalogItem>>> ItemsByBrandIdAsync(int? catalogBrandId, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
+    {
+        var root = (IQueryable<CatalogItem>)db.CatalogItems;
+
+        if (catalogBrandId.HasValue)
+        {
+            root = root.Where(ci => ci.CatalogBrandId == catalogBrandId);
+        }
+
+        var totalItems = await root
+            .CountAsync();
+
+        var itemsOnPage = await root
+            .Skip(pageSize * pageIndex)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PaginatedItemsViewModel<CatalogItem>(pageIndex, pageSize, totalItems, itemsOnPage);
+    }
+
 
     // POST api/[controller]/items
     [HttpPost]

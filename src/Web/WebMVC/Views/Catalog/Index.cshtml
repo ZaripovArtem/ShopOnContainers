@@ -1,0 +1,11 @@
+﻿@model WebMVC.ViewModel.CatalogViewModel.IndexViewModel
+
+@{
+    ViewData["Title"] = "Catalog";
+}
+
+@foreach(var p in Model.CatalogItems)
+{
+    <h1>@p.Name</h1>
+    <h1>@p.Price</h1>
+}
